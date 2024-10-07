@@ -338,7 +338,19 @@ for (const [key, factory] of FACTORIES) {
       rc = await sqlite3.exec(db, 'CREATE TABLE t(x)');
       expect(rc).toEqual(SQLite.SQLITE_OK);
 
-      expect(authorizations.length).toBeGreaterThan(0);
+      let authCreateTable = false;
+      for (const authorization of authorizations) {
+        switch (authorization[0]) {
+          case SQLite.SQLITE_CREATE_TABLE:
+            authCreateTable = true;
+            expect(authorization[1]).toEqual('t');
+            expect(authorization[2]).toEqual('');
+            expect(authorization[3]).toEqual('main');
+            expect(authorization[4]).toEqual('');
+            break;
+        }
+      }
+      expect(authCreateTable).toBeTrue();
     });
 
     it('should deny authorization', async function() {
@@ -369,5 +381,45 @@ for (const [key, factory] of FACTORIES) {
       expect(authorizations.length).toBeGreaterThan(0);
     });
   });
-}
 
+  describe(`${key} update_hook`, function() {
+    let db;
+    beforeEach(async function() {
+      db = await sqlite3.open_v2(':memory:');
+    });
+  
+    afterEach(async function() {
+      await sqlite3.close(db);
+    });
+
+    it('should call update hook', async function() {
+      let rc;
+
+      let calls = [];
+      sqlite3.update_hook(db, (updateType, dbName, tblName, rowid) => {
+        calls.push([updateType, dbName, tblName, rowid]);
+      });
+
+      rc = await sqlite3.exec(db, `
+        CREATE TABLE t(i integer primary key, x);
+        INSERT INTO t VALUES (1, 'foo'), (2, 'bar'), (12345678987654321, 'baz');
+      `);
+      expect(rc).toEqual(SQLite.SQLITE_OK);
+      expect(calls).toEqual([
+        [18, "main", "t", 1n],
+        [18, "main", "t", 2n],
+        [18, "main", "t", 12345678987654321n],
+      ]);
+      
+      calls.splice(0, calls.length);
+      
+      await sqlite3.exec(db, `DELETE FROM t WHERE i = 2`);
+      expect(calls).toEqual([[9, "main", "t", 2n]]);
+
+      calls.splice(0, calls.length);
+      
+      await sqlite3.exec(db, `UPDATE t SET x = 'bar' WHERE i = 1`);
+      expect(calls).toEqual([[23, "main", "t", 1n]]);
+    });
+  });
+}

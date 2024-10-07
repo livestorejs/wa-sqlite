@@ -10,7 +10,7 @@ on:
     branches: [ "master" ]
 
 env:
-  EM_VERSION: 3.1.47
+  EM_VERSION: 3.1.61
   EM_CACHE_FOLDER: 'emsdk-cache'
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
     - uses: browser-actions/setup-chrome@v1
       id: setup-chrome
       with:
-        chrome-version: 121
+        chrome-version: 129
     - run: |
           ${{ steps.setup-chrome.outputs.chrome-path }} --version
 
@@ -60,7 +60,7 @@ jobs:
       with:
         path: ${{env.EM_CACHE_FOLDER}}
         key: ${{env.EM_VERSION}}-${{ runner.os }}
-    - uses: mymindstorm/setup-emsdk@v12
+    - uses: mymindstorm/setup-emsdk@v14
       with:
         version: ${{env.EM_VERSION}}
         actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
