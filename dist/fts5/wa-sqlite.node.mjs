@@ -5619,15 +5619,17 @@ var stackRestore = createExportWrapper('stackRestore');
 var stackAlloc = createExportWrapper('stackAlloc');
 var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'])();
 var dynCall_jiji = Module['dynCall_jiji'] = createExportWrapper('dynCall_jiji');
+var dynCall_vijii = Module['dynCall_vijii'] = createExportWrapper('dynCall_vijii');
+var dynCall_iiiij = Module['dynCall_iiiij'] = createExportWrapper('dynCall_iiiij');
 var dynCall_viiiiijj = Module['dynCall_viiiiijj'] = createExportWrapper('dynCall_viiiiijj');
 var dynCall_viji = Module['dynCall_viji'] = createExportWrapper('dynCall_viji');
 var dynCall_viiiij = Module['dynCall_viiiij'] = createExportWrapper('dynCall_viiiij');
 var dynCall_iij = Module['dynCall_iij'] = createExportWrapper('dynCall_iij');
-var dynCall_iiiij = Module['dynCall_iiiij'] = createExportWrapper('dynCall_iiiij');
 var dynCall_iijii = Module['dynCall_iijii'] = createExportWrapper('dynCall_iijii');
 var dynCall_iiji = Module['dynCall_iiji'] = createExportWrapper('dynCall_iiji');
 var dynCall_iiiiiij = Module['dynCall_iiiiiij'] = createExportWrapper('dynCall_iiiiiij');
-var _sqlite3_version = Module['_sqlite3_version'] = 108472;
+var dynCall_ji = Module['dynCall_ji'] = createExportWrapper('dynCall_ji');
+var _sqlite3_version = Module['_sqlite3_version'] = 112936;
 
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
