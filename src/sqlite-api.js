@@ -502,8 +502,7 @@ export function Factory(Module) {
   //   return SQLite.SQLITE_OK;
   // };
   sqlite3.exec = function(db, sql, callback) {
-    const stmts = sqlite3.statements(db, sql, { unscoped: true });
-    for (const stmt of stmts) {
+    for (const stmt of sqlite3.statements(db, sql)) {
       let columns;
       while (sqlite3.step(stmt) === SQLite.SQLITE_ROW) {
         if (callback) {
@@ -512,9 +511,6 @@ export function Factory(Module) {
           callback(row, columns);
         }
       }
-    }
-    for (const stmt of stmts) {
-      sqlite3.finalize(stmt);
     }
     return SQLite.SQLITE_OK;
   };
@@ -775,9 +771,9 @@ export function Factory(Module) {
 
       const stmts = [];
 
-      // return (async function*() {
+    return (function*() {
       const onFinally = [];
-      // try {
+      try {
         // Encode SQL string to UTF-8.
         const utf8 = textEncoder.encode(sql);
 
@@ -815,12 +811,12 @@ export function Factory(Module) {
           // Allow retry operations.
           const zTail = Module.getValue(pzTail, '*');
           const rc = prepare(
-            db,
-            zTail,
-            pzEnd - pzTail,
-            options.flags || 0,
-            pStmt,
-            pzTail);
+              db,
+              zTail,
+              pzEnd - pzTail,
+              options.flags || 0,
+              pStmt,
+              pzTail);
 
           if (rc !== SQLite.SQLITE_OK) {
             check('sqlite3_prepare_v3', rc, db);
@@ -829,17 +825,15 @@ export function Factory(Module) {
           stmt = Module.getValue(pStmt, '*');
           if (stmt) {
             mapStmtToDB.set(stmt, db);
-            // yield stmt;
-            stmts.push(stmt);
+            yield stmt;
           }
         } while (stmt);
-      // } finally {
-      //   while (onFinally.length) {
-      //     onFinally.pop()();
-      //   }
-      // }
-
-      return stmts;
+      } finally {
+        while (onFinally.length) {
+          onFinally.pop()();
+        }
+      }
+    })();
   };
 
   sqlite3.step = (function() {

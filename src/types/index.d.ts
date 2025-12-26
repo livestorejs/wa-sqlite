@@ -811,7 +811,7 @@ interface SQLiteAPI {
    * @param options
    */
   // statements(db: number, sql: string, options?: SQLitePrepareOptions): AsyncIterable<number>;
-  statements(db: number, sql: string, options?: SQLitePrepareOptions): ReadonlyArray<number>;
+  statements(db: number, sql: string, options?: SQLitePrepareOptions): Iterable<number>;
 
   /**
    * Evaluate an SQL statement
